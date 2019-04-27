@@ -6,11 +6,13 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   TouchableOpacity,
-  Alert
+  Alert,
+  AsyncStorage
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
+import axios from "axios";
 
 import Input from "../components/Input";
 
@@ -49,7 +51,35 @@ const ButtonText = styled(Text)`
 
 export default class SigninScreen extends React.PureComponent {
   _handleSubmit = values => {
-    Alert.alert(JSON.stringify(values));
+    const userData = JSON.stringify(values);
+    axios
+      .post("http://192.168.1.10:8000/signup", userData)
+      .then(res => {
+        Alert.alert(res.data.token);
+        AsyncStorage.setItem("jwt", res.data.token);
+        // this.props.navigation.navigate("App")
+      })
+      .catch(error =>
+        Alert.alert(
+          "Used Mail",
+          "Mail is used by you or someone",
+          [
+            {
+              text: "Sing In",
+              onPress: () => this.props.navigation.navigate("Signin")
+            },
+            {
+              text: "Forgat My Password",
+              onPress: () => this.props.navigation.navigate("Forgat")
+            },
+            {
+              text: "Cancel",
+              style: "cancel"
+            }
+          ],
+          { cancelable: true }
+        )
+      );
   };
   render() {
     return (
@@ -59,8 +89,7 @@ export default class SigninScreen extends React.PureComponent {
           initialValues={{ email: "", password: "", name: "" }}
           onSubmit={this._handleSubmit}
           validationSchema={Yup.object().shape({
-            name: Yup.string()
-            .required("name is required"),
+            name: Yup.string().required("name is required"),
             email: Yup.string()
               .email("Not valid email")
               .required("email is required"),
@@ -84,7 +113,7 @@ export default class SigninScreen extends React.PureComponent {
                 onChange={setFieldValue}
                 onTouch={setFieldTouched}
                 name="name"
-                error={touched.email && errors.email}
+                error={touched.name && errors.name}
               />
               <Input
                 label="Email"

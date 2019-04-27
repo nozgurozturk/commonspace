@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { AsyncStorage } from "react-native";
 import {
   createBottomTabNavigator,
   createStackNavigator,
@@ -35,10 +35,10 @@ let AuthTab = createStackNavigator(
   {
     Signin: SigninScreen,
     Signup: SignupScreen,
-    Forgat : ForgatPasswordScene
+    Forgat: ForgatPasswordScene
   },
   {
-    headerMode:'none'
+    headerMode: "none"
   },
   {
     initialRouteName: "Signin"
@@ -53,12 +53,25 @@ let Navigation = createAppContainer(
       App: AppTab
     },
     {
-      initialRouteName: "Welcome"
+      initialRouteName: 'Auth'
     }
   )
 );
 
 export default class App extends React.Component {
+
+  _fethcData = async () => {
+    try {
+      const JWT = await AsyncStorage.getItem("jwt");
+      if (JWT !== null) {
+        this.props.navigation.navigate('App');
+      }
+    } catch (error) {}
+  };
+  componentDidMount(){
+    this._fethcData();
+  }
+
   render() {
     return (
       <Provider store={createStore(reducers, {})}>

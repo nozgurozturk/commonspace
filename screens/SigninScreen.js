@@ -6,11 +6,13 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   TouchableOpacity,
-  Alert
+  Alert,
+  AsyncStorage
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
+import axios from "axios";
 
 import Input from "../components/Input";
 
@@ -35,7 +37,7 @@ const ButtonContainer = styled(TouchableOpacity)`
   height: 50;
   margin: 40px auto;
   background-color: #2a66ff;
-  opacity:${props=>props.opacity};
+  opacity: ${props => props.opacity};
   border-radius: 25;
   box-shadow: 0px 2px 2px #1a1a1a;
 `;
@@ -56,8 +58,32 @@ export default class SigninScreen extends React.PureComponent {
   _onPress = () => {
     this.props.navigation.navigate("Signup");
   };
-  _handleSubmit = values => {
-    Alert.alert(JSON.stringify(values));
+  _handleSubmit =  values => {
+    const userData = JSON.stringify(values)
+     axios
+      .post("http://192.168.1.10:8000/signin", userData)
+      .then(res => {
+        Alert.alert(res.data.token);
+        AsyncStorage.setItem('jwt', res.data.token);
+        this.props.navigation.navigate('App')
+      })
+      .catch(error =>
+        Alert.alert(
+          "Incorrect",
+          "Password or Email is Incorrect",
+          [
+            {
+              text: "Forgat My Password",
+              onPress: () => this.props.navigation.navigate("Forgat")
+            },
+            {
+              text: "Cancel",
+              style: "cancel"
+            }
+          ],
+          { cancelable: false }
+        )
+      )
   };
   render() {
     return (
