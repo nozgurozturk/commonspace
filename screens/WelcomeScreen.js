@@ -12,7 +12,7 @@ const SLIDE_DATA = [
 
 export default class WelcomeScreen extends React.Component {
 _onComplete=()=>{
-  this.props.navigation.navigate('Signin')
+  this.props.navigation.navigate('Signup')
 }
   render() {
     return (

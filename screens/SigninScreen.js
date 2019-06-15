@@ -19,6 +19,8 @@ import Input from "../components/Input";
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
+const _IP = '192.168.0.12';
+
 const Wrapper = styled(KeyboardAvoidingView)`
   flex: 1;
   margin: 0px auto;
@@ -55,15 +57,14 @@ const BottomContainer = styled(View)`
 `;
 
 export default class SigninScreen extends React.PureComponent {
-  _onPress = () => {
-    this.props.navigation.navigate("Signup");
+  _onPress = (route) => {
+    this.props.navigation.navigate(route);
   };
   _handleSubmit =  values => {
     const userData = JSON.stringify(values)
      axios
-      .post("http://192.168.1.10:8000/signin", userData)
+      .post(`http://${_IP}:8000/signin`, userData)
       .then(res => {
-        Alert.alert(res.data.token);
         AsyncStorage.setItem('jwt', res.data.token);
         this.props.navigation.navigate('App')
       })
@@ -141,8 +142,8 @@ export default class SigninScreen extends React.PureComponent {
           )}
         />
         <BottomContainer>
-          <Button onPress={this._onPress} title="Signup" />
-          <Button onPress={this._onPress} title="Forgat Password" />
+          <Button onPress={()=>{this._onPress('Signup')}} title="Signup" />
+          <Button onPress={()=>{this._onPress('Forgat')}} title="Forgat Password" />
         </BottomContainer>
       </Wrapper>
     );

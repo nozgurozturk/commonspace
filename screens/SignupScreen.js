@@ -19,6 +19,8 @@ import Input from "../components/Input";
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
+const _IP = '192.168.0.12';
+
 const Wrapper = styled(KeyboardAvoidingView)`
   flex: 1;
   margin: 0px auto;
@@ -53,11 +55,10 @@ export default class SigninScreen extends React.PureComponent {
   _handleSubmit = values => {
     const userData = JSON.stringify(values);
     axios
-      .post("http://192.168.1.10:8000/signup", userData)
+      .post(`http://${_IP}:8000/signup`, userData)
       .then(res => {
-        Alert.alert(res.data.token);
         AsyncStorage.setItem("jwt", res.data.token);
-        // this.props.navigation.navigate("App")
+        this.props.navigation.navigate("App")
       })
       .catch(error =>
         Alert.alert(

@@ -53,7 +53,7 @@ let Navigation = createAppContainer(
       App: AppTab
     },
     {
-      initialRouteName: 'Auth'
+      initialRouteName: 'App'
     }
   )
 );
